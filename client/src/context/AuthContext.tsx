@@ -45,13 +45,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [currentUser]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChangedListener((user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
+    try {
+      console.log('Setting up Firebase auth listener...');
+      const unsubscribe = onAuthStateChangedListener((user) => {
+        console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+        setCurrentUser(user);
+        setLoading(false);
+      });
 
-    return unsubscribe;
-  }, []);
+      return unsubscribe;
+    } catch (error) {
+      console.error('Firebase auth error:', error);
+      setLoading(false);
+      toast({
+        title: "Authentication Error",
+        description: "Could not set up authentication. Please check Firebase configuration.",
+        variant: "destructive",
+      });
+      // Return a no-op function as cleanup
+      return () => {};
+    }
+  }, [toast]);
 
   const login = async (email: string, password: string): Promise<User | null> => {
     try {
