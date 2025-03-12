@@ -53,9 +53,9 @@ const categories = [
 
 export default function ProductForm({ onSubmit, isSubmitting, product }: ProductFormProps) {
   const { toast } = useToast();
-  const { uploadImage, uploading } = useCloudinary({
-    uploadPreset: "your_cloudinary_upload_preset",
-    cloudName: "your_cloudinary_cloud_name"
+  const { uploadImage, uploading, error } = useCloudinary({
+    uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
   });
 
   const form = useForm<FormValues>({

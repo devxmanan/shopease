@@ -10,7 +10,7 @@ import {
   User
 } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, query, where, orderBy } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
@@ -35,7 +35,7 @@ if (getApps().length === 0) {
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+
 export const googleProvider = new GoogleAuthProvider();
 
 // Auth functions
@@ -150,17 +150,4 @@ export const queryDocumentsWithOrder = async (
   }
 };
 
-// Storage functions
-export const uploadImage = async (file: File, path: string): Promise<string> => {
-  try {
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
-  } catch (error) {
-    console.error(`Error uploading image to ${path}:`, error);
-    
-    // Return a placeholder image URL for development
-    console.log('Using placeholder image for development');
-    return 'https://placehold.co/600x400/e2e8f0/a0aec0?text=Image+Upload+Unavailable';
-  }
-};
+
