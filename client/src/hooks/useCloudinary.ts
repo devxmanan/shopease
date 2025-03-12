@@ -18,9 +18,12 @@ interface UseCloudinaryReturn {
 }
 
 export const useCloudinary = ({
-  uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "shop_ease",
-  cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "",
+  uploadPreset = "shopease",
+  cloudName,
 }: UseCloudinaryProps): UseCloudinaryReturn => {
+  // Use environment variables directly
+  const actualCloudName = cloudName || import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const actualUploadPreset = uploadPreset;
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,29 +32,36 @@ export const useCloudinary = ({
     setError(null);
 
     try {
+      console.log("Starting Cloudinary upload with preset:", actualUploadPreset);
+      console.log("Cloudinary cloud name:", actualCloudName);
+      
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
+      formData.append('upload_preset', actualUploadPreset);
 
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const url = `https://api.cloudinary.com/v1_1/${actualCloudName}/image/upload`;
+      console.log("Upload URL:", url);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
 
       const data = await response.json();
+      console.log("Cloudinary response:", data);
 
       if (!response.ok) {
+        console.error("Cloudinary upload failed:", data);
         throw new Error(data.error?.message || 'Failed to upload image');
       }
 
+      console.log("Upload successful, secure URL:", data.secure_url);
       return {
         url: data.secure_url,
         publicId: data.public_id,
       };
     } catch (err) {
+      console.error("Cloudinary upload error:", err);
       const message = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(message);
       return null;

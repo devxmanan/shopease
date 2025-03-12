@@ -80,17 +80,31 @@ export default function ProductForm({ onSubmit, isSubmitting, product }: Product
 
     try {
       const file = files[0];
+      console.log("Starting image upload for file:", file.name);
       const result = await uploadImage(file);
       
       if (result) {
+        console.log("Upload successful, adding URL to form:", result.url);
         const currentUrls = form.getValues("imageUrls") || [];
         form.setValue("imageUrls", [...currentUrls, result.url]);
+        toast({
+          title: "Success",
+          description: "Image uploaded successfully",
+          variant: "default"
+        });
+      } else if (error) {
+        console.error("Upload failed with error:", error);
+        toast({
+          title: "Upload Error",
+          description: error,
+          variant: "destructive"
+        });
       }
     } catch (err) {
       console.error("Error uploading image:", err);
       toast({
         title: "Error",
-        description: "Failed to upload image",
+        description: "Failed to upload image: " + (err instanceof Error ? err.message : "Unknown error"),
         variant: "destructive"
       });
     }
