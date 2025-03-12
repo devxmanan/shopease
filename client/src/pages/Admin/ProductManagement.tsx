@@ -224,13 +224,15 @@ const ProductManagement = () => {
     try {
       setIsSubmitting(true);
       
+      console.log("Product data received for submission:", productData);
+      
       // Format product data for Firebase
       const formattedData = {
         name: productData.name || '',
         description: productData.description || null,
         price: parseFloat(productData.price) || 0,
         originalPrice: productData.originalPrice ? parseFloat(productData.originalPrice) : null,
-        imageUrls: productData.imageUrls || null,
+        imageUrls: Array.isArray(productData.imageUrls) ? productData.imageUrls : [],
         category: productData.category || '',
         stock: parseInt(productData.stock) || 0,
         rating: productData.rating ? parseFloat(productData.rating) : null,
@@ -240,6 +242,8 @@ const ProductManagement = () => {
         isNew: productData.isNew || null,
         createdAt: currentProduct ? currentProduct.createdAt : new Date().toISOString()
       };
+      
+      console.log("Formatted data to save:", formattedData);
       
       if (currentProduct) {
         // Update existing product

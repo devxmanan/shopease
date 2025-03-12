@@ -70,9 +70,18 @@ export default function ProductForm({ onSubmit, isSubmitting, product }: Product
       featured: product?.featured || false,
       isOnSale: product?.isOnSale || false,
       isNew: product?.isNew || false,
-      imageUrls: product?.imageUrls || []
+      imageUrls: Array.isArray(product?.imageUrls) ? product.imageUrls : []
     }
   });
+  
+  // Log the product and form values to debug
+  useEffect(() => {
+    if (product) {
+      console.log('Product passed to form:', product);
+      console.log('Image URLs in product:', product.imageUrls);
+      console.log('Form values:', form.getValues());
+    }
+  }, [product]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
