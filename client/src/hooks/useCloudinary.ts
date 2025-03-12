@@ -42,8 +42,12 @@ export const useCloudinary = ({
       const url = `https://api.cloudinary.com/v1_1/${actualCloudName}/image/upload`;
       console.log("Upload URL:", url);
       
+      // Add specific headers to avoid CORS issues
       const response = await fetch(url, {
         method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+        },
         body: formData,
       });
 

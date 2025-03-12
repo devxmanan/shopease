@@ -54,7 +54,7 @@ const categories = [
 export default function ProductForm({ onSubmit, isSubmitting, product }: ProductFormProps) {
   const { toast } = useToast();
   const { uploadImage, uploading, error } = useCloudinary({
-    uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+    uploadPreset: "shopease", // Using the hardcoded upload preset name
     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
   });
 
