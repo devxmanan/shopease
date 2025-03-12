@@ -26,7 +26,9 @@ const Navbar = () => {
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { currentUser, logout, isAdmin } = useAuth();
+  // Get auth context 
+  const { currentUser, isAdmin, logout } = useAuth();
+  
   const { cartItems, getTotalItems } = useCart();
   const [_, setLocation] = useLocation();
   

@@ -13,7 +13,16 @@ interface AuthContextType {
   isAdmin: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Create context with default values
+export const AuthContext = createContext<AuthContextType>({
+  currentUser: null,
+  loading: true,
+  login: async () => null,
+  register: async () => null,
+  logout: async () => {},
+  googleSignIn: async () => null,
+  isAdmin: false
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -153,7 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
