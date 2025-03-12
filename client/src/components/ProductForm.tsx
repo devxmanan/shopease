@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -80,8 +81,22 @@ export default function ProductForm({ onSubmit, isSubmitting, product }: Product
       console.log('Product passed to form:', product);
       console.log('Image URLs in product:', product.imageUrls);
       console.log('Form values:', form.getValues());
+      
+      // Update the form values whenever the product changes
+      form.reset({
+        name: product.name || "",
+        description: product.description || "",
+        price: product.price || 0,
+        originalPrice: product.originalPrice || null,
+        category: product.category || "Other",
+        stock: product.stock || 0,
+        featured: product.featured || false,
+        isOnSale: product.isOnSale || false,
+        isNew: product.isNew || false,
+        imageUrls: Array.isArray(product.imageUrls) ? product.imageUrls : []
+      });
     }
-  }, [product]);
+  }, [product, form]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -90,12 +105,24 @@ export default function ProductForm({ onSubmit, isSubmitting, product }: Product
     try {
       const file = files[0];
       console.log("Starting image upload for file:", file.name);
+      
+      // Show loading toast
+      toast({
+        title: "Uploading...",
+        description: "Uploading image to Cloudinary",
+      });
+      
       const result = await uploadImage(file);
       
       if (result) {
         console.log("Upload successful, adding URL to form:", result.url);
+        // Ensure we're working with an array
         const currentUrls = form.getValues("imageUrls") || [];
-        form.setValue("imageUrls", [...currentUrls, result.url]);
+        const urlsArray = Array.isArray(currentUrls) ? currentUrls : [];
+        
+        // Set the new array of URLs
+        form.setValue("imageUrls", [...urlsArray, result.url]);
+        
         toast({
           title: "Success",
           description: "Image uploaded successfully",
@@ -105,7 +132,7 @@ export default function ProductForm({ onSubmit, isSubmitting, product }: Product
         console.error("Upload failed with error:", error);
         toast({
           title: "Upload Error",
-          description: error,
+          description: error || "Failed to upload image",
           variant: "destructive"
         });
       }

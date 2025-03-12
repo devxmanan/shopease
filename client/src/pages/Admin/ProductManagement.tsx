@@ -237,10 +237,12 @@ const ProductManagement = () => {
         stock: parseInt(productData.stock) || 0,
         rating: productData.rating ? parseFloat(productData.rating) : null,
         reviewCount: productData.reviewCount ? parseInt(productData.reviewCount) : null,
-        featured: productData.featured || null,
-        isOnSale: productData.isOnSale || null,
-        isNew: productData.isNew || null,
-        createdAt: currentProduct ? currentProduct.createdAt : new Date().toISOString()
+        featured: productData.featured || false,
+        isOnSale: productData.isOnSale || false,
+        isNew: productData.isNew || false,
+        createdAt: currentProduct && currentProduct.createdAt 
+          ? currentProduct.createdAt 
+          : new Date().toISOString()
       };
       
       console.log("Formatted data to save:", formattedData);
