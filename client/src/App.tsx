@@ -19,50 +19,36 @@ import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ProductManagement from "./pages/Admin/ProductManagement";
 import OrderManagement from "./pages/Admin/OrderManagement";
-import { useAuth } from "./context/AuthContext";
-
-// Protected route component for admin routes
-const AdminRoute = ({ component: Component, ...rest }: { component: React.ComponentType<any>, [x: string]: any }) => {
-  const { currentUser, isAdmin, loading } = useAuth();
-  
-  // While loading auth state, show nothing
-  if (loading) return null;
-  
-  // If user is not an admin, redirect to home
-  if (!currentUser || !isAdmin) {
-    window.location.href = '/';
-    return null;
-  }
-  
-  return <Component {...rest} />;
-};
+import AdminRoute from "./components/routing/AdminRoute";
 
 function Router() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/shop" component={Shop} />
-        <Route path="/product/:id" component={ProductDetail} />
-        <Route path="/cart" component={Cart} />
-        <Route path="/checkout" component={Checkout} />
-        <Route path="/orders" component={Orders} />
-        <Route path="/categories" component={Categories} />
-        <Route path="/about" component={About} />
-        <Route path="/contact" component={Contact} />
-        <Route path="/admin">
-          {() => <AdminRoute component={AdminDashboard} />}
-        </Route>
-        <Route path="/admin/products">
-          {() => <AdminRoute component={ProductManagement} />}
-        </Route>
-        <Route path="/admin/orders">
-          {() => <AdminRoute component={OrderManagement} />}
-        </Route>
-        {/* Fallback to 404 */}
-        <Route component={NotFound} />
-      </Switch>
+      <main className="flex-grow">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/shop" component={Shop} />
+          <Route path="/product/:id" component={ProductDetail} />
+          <Route path="/cart" component={Cart} />
+          <Route path="/checkout" component={Checkout} />
+          <Route path="/orders" component={Orders} />
+          <Route path="/categories" component={Categories} />
+          <Route path="/about" component={About} />
+          <Route path="/contact" component={Contact} />
+          <Route path="/admin">
+            {() => <AdminRoute component={AdminDashboard} />}
+          </Route>
+          <Route path="/admin/products">
+            {() => <AdminRoute component={ProductManagement} />}
+          </Route>
+          <Route path="/admin/orders">
+            {() => <AdminRoute component={OrderManagement} />}
+          </Route>
+          {/* Fallback to 404 */}
+          <Route component={NotFound} />
+        </Switch>
+      </main>
       <Footer />
     </div>
   );
