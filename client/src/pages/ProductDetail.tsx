@@ -370,10 +370,10 @@ const ProductDetail = () => {
             
             {/* Add more detailed description here */}
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. 
+              {/* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. 
               Vivamus vel eros vel eros ultrices tincidunt. Sed at odio sit amet erat 
               hendrerit rhoncus. Morbi volutpat, magna et rutrum varius, lectus 
-              nunc eleifend magna, id fermentum enim velit vel nisl.
+              nunc eleifend magna, id fermentum enim velit vel nisl. */}
             </p>
           </div>
         </TabsContent>
