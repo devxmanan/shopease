@@ -99,17 +99,17 @@ const FilterSidebar = ({
         <h4 className="font-medium mb-2">Categories</h4>
         <div className="space-y-2">
           {categories.map((category) => (
-            <div key={category} className="flex items-center space-x-2">
+            <div key={category.name} className="flex items-center space-x-2">
               <Checkbox
                 id={`category-${category}`}
-                checked={filters.categories.includes(category)}
+                checked={filters.categories.includes(category.name)}
                 onCheckedChange={(checked) => 
-                  handleCategoryChange(category, checked === true)
+                  handleCategoryChange(category.name, checked === true)
                 }
                 disabled={loading}
               />
               <Label htmlFor={`category-${category}`} className="text-sm cursor-pointer">
-                {category}
+                {category.name}
               </Label>
             </div>
           ))}

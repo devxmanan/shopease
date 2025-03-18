@@ -233,8 +233,8 @@ export default function ProductForm({ onSubmit, isSubmitting, product }: Product
                   </FormControl>
                   <SelectContent>
                     {categories.map(category => (
-                      <SelectItem key={category} value={category}>
-                        {category}
+                      <SelectItem key={category.name} value={category.name}>
+                        {category.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

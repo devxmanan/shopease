@@ -78,7 +78,7 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {categories.slice(0, 4).map((category) => (
-                <CategoryCard key={category} category={category} />
+                <CategoryCard key={category.name} category={category} />
               ))}
             </div>
           )}
