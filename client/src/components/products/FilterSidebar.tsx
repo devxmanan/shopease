@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Category } from "@shared/schema";
 import { Star } from "lucide-react";
+import { categories } from "@/lib/data";
 
 export interface FilterOptions {
   priceRange: [number, number];
@@ -14,7 +15,6 @@ export interface FilterOptions {
 }
 
 interface FilterSidebarProps {
-  categories: Category[];
   initialFilters: FilterOptions;
   onFilterChange: (filters: FilterOptions) => void;
   onApplyFilters: () => void;
@@ -22,7 +22,6 @@ interface FilterSidebarProps {
 }
 
 const FilterSidebar = ({
-  categories,
   initialFilters,
   onFilterChange,
   onApplyFilters,
@@ -33,7 +32,7 @@ const FilterSidebar = ({
 
   useEffect(() => {
     setFilters(initialFilters);
-    setPriceLabel(`$${initialFilters.priceRange[0]} - $${initialFilters.priceRange[1]}`);
+    setPriceLabel(`${initialFilters.priceRange[0]}Rs - ${initialFilters.priceRange[1]}Rs`);
   }, [initialFilters]);
 
   const handlePriceChange = (values: number[]) => {
@@ -42,7 +41,7 @@ const FilterSidebar = ({
       ...filters,
       priceRange: newRange,
     });
-    setPriceLabel(`$${newRange[0]} - $${newRange[1]}`);
+    setPriceLabel(`${newRange[0]}Rs - ${newRange[1]}Rs`);
   };
 
   const handleCategoryChange = (category: string, checked: boolean) => {
@@ -89,9 +88,9 @@ const FilterSidebar = ({
           disabled={loading}
         />
         <div className="flex justify-between text-sm text-slate-600">
-          <span>$0</span>
+          <span>0Rs</span>
           <span className="font-medium">{priceLabel}</span>
-          <span>$1000</span>
+          <span>10000Rs</span>
         </div>
       </div>
       
@@ -100,24 +99,24 @@ const FilterSidebar = ({
         <h4 className="font-medium mb-2">Categories</h4>
         <div className="space-y-2">
           {categories.map((category) => (
-            <div key={category.id} className="flex items-center space-x-2">
+            <div key={category} className="flex items-center space-x-2">
               <Checkbox
-                id={`category-${category.id}`}
-                checked={filters.categories.includes(category.name)}
+                id={`category-${category}`}
+                checked={filters.categories.includes(category)}
                 onCheckedChange={(checked) => 
-                  handleCategoryChange(category.name, checked === true)
+                  handleCategoryChange(category, checked === true)
                 }
                 disabled={loading}
               />
-              <Label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer">
-                {category.name}
+              <Label htmlFor={`category-${category}`} className="text-sm cursor-pointer">
+                {category}
               </Label>
             </div>
           ))}
         </div>
       </div>
       
-      {/* Ratings */}
+      {/* Ratings
       <div className="mb-6">
         <h4 className="font-medium mb-2">Rating</h4>
         <div className="space-y-2">
@@ -150,7 +149,7 @@ const FilterSidebar = ({
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
       
       <Button 
         className="w-full"

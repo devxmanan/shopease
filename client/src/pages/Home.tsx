@@ -5,12 +5,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ProductGrid from '@/components/products/ProductGrid';
 import CategoryCard from '@/components/products/CategoryCard';
 import { Input } from '@/components/ui/input';
-import { Product, Category } from '@shared/schema';
 import { getAllDocuments, queryDocuments } from '@/lib/firebase';
+import { categories } from '@/lib/data';
 
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -22,12 +21,7 @@ const Home = () => {
         
         // Fetch featured products
         const featuredProductsData = await queryDocuments('products', 'featured', '==', true);
-        setFeaturedProducts(featuredProductsData as Product[]);
-        
-        // Fetch categories
-        const categoriesData = await getAllDocuments('categories');
-        setCategories(categoriesData as Category[]);
-        
+        setFeaturedProducts(featuredProductsData);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to load data. Please try again later.');
@@ -84,7 +78,7 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {categories.slice(0, 4).map((category) => (
-                <CategoryCard key={category.id} category={category} />
+                <CategoryCard key={category} category={category} />
               ))}
             </div>
           )}

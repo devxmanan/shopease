@@ -79,11 +79,11 @@ const Footer = () => {
             <ul className="space-y-2 text-slate-300">
               <li className="flex items-start">
                 <MapPin className="mt-1 mr-2 h-4 w-4" />
-                <span>123 Commerce St, Anytown, USA 12345</span>
+                <span>Bareilly, Uttar Pradesh, 243001</span>
               </li>
               <li className="flex items-start">
                 <Phone className="mt-1 mr-2 h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 9999999999</span>
               </li>
               <li className="flex items-start">
                 <Mail className="mt-1 mr-2 h-4 w-4" />
@@ -94,7 +94,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-slate-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-slate-400 text-sm mb-4 md:mb-0">© 2023 ShopEase. All rights reserved.</p>
+          <p className="text-slate-400 text-sm mb-4 md:mb-0">© {new Date().getFullYear()} ShopEase. All rights reserved.</p>
           <div className="flex space-x-4">
             <Link href="/privacy" className="text-slate-400 hover:text-white transition-colors text-sm">
               Privacy Policy

@@ -20,11 +20,12 @@ import { Product, insertProductSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { useCloudinary } from "@/hooks/useCloudinary";
 import { Loader2 } from "lucide-react";
+import { categories } from "@/lib/data";
 
 interface ProductFormProps {
   onSubmit: (data: any) => Promise<void>;
   isSubmitting: boolean;
-  product?: Product;
+  product?: any;
 }
 
 type FormValues = {
@@ -40,17 +41,7 @@ type FormValues = {
   imageUrls: string[] | null;
 };
 
-const categories = [
-  "Electronics",
-  "Clothing",
-  "Books",
-  "Home & Garden",
-  "Sports & Outdoors",
-  "Toys & Games",
-  "Health & Beauty",
-  "Automotive",
-  "Other"
-];
+
 
 export default function ProductForm({ onSubmit, isSubmitting, product }: ProductFormProps) {
   const { toast } = useToast();

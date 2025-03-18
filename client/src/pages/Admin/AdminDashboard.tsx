@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminLayout from '@/components/AdminLayout';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from 'recharts';
 import { getAllDocuments } from '@/lib/firebase';
 import { Product, Order, User } from '@shared/schema';
@@ -103,7 +102,7 @@ const AdminDashboard = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <div className="space-x-2">
-          <Button variant="outline">Export</Button>
+          <Button>Export</Button>
           <Button>
             <Link href="/admin/products/new">Add New Product</Link>
           </Button>
@@ -300,7 +299,7 @@ const AdminDashboard = () => {
                   <div className="flex-1">
                     <p className="text-sm font-medium">New order #{order.id}</p>
                     <p className="text-xs text-slate-500">
-                      ${order.total.toFixed(2)} • {new Date(order.createdAt).toLocaleDateString()}
+                      ${order.total.toFixed(2)} • {new Date(order.createdAt || "").toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -354,6 +353,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
+              {/* temporary demo data */}
               <h3 className="text-2xl font-bold">$1,243.32</h3>
               <div className="text-green-500 text-sm flex items-center">
                 +18% <ArrowUpRight className="h-3 w-3 ml-1" />

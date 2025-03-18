@@ -15,9 +15,9 @@ import { getAllDocuments, queryDocuments, queryDocumentsWithOrder } from '@/lib/
 
 const Shop = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<any>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
+  const [categories, setCategories] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [location, setLocation] = useLocation();
@@ -25,7 +25,7 @@ const Shop = () => {
   // Parse query parameters
   const params = new URLSearchParams(location.split('?')[1] || '');
   const categoryParam = params.get('category');
-  const sortParam = params.get('sort') || 'featured';
+  const sortParam = params.get('sort') || '';
   const filterParam = params.get('filter');
   
   const [filters, setFilters] = useState<FilterOptions>({
@@ -41,23 +41,19 @@ const Shop = () => {
         setLoading(true);
         
         // Fetch all products
-        let productsData: Product[] = [];
+        let productsData: any = [];
         
         if (filterParam === 'featured') {
-          productsData = await queryDocuments('products', 'featured', '==', true) as Product[];
+          productsData = await queryDocuments('products', 'featured', '==', true);
         } else if (filterParam === 'new') {
-          productsData = await queryDocuments('products', 'isNew', '==', true) as Product[];
+          productsData = await queryDocuments('products', 'isNew', '==', true);
         } else if (filterParam === 'sale') {
-          productsData = await queryDocuments('products', 'isOnSale', '==', true) as Product[];
+          productsData = await queryDocuments('products', 'isOnSale', '==', true);
         } else {
-          productsData = await getAllDocuments('products') as Product[];
+          productsData = await getAllDocuments('products');
         }
         
         setProducts(productsData);
-        
-        // Fetch categories
-        const categoriesData = await getAllDocuments('categories');
-        setCategories(categoriesData as Category[]);
         
         // Set filtered products based on URL params
         applyFilters(productsData, {
@@ -94,7 +90,7 @@ const Shop = () => {
     
     // Filter by rating
     if (currentFilters.rating !== null) {
-      result = result.filter(product => product.rating >= currentFilters.rating!);
+      result = result.filter(product => product.rating && product.rating >= currentFilters.rating!);
     }
     
     // Sort products
@@ -106,7 +102,7 @@ const Shop = () => {
         result.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        result.sort((a, b) => b.rating - a.rating);
+        // result.sort((a, b) => if(b.rating && a) b.rating - a.rating);
         break;
       case 'newest':
         result.sort((a, b) => {
@@ -174,7 +170,6 @@ const Shop = () => {
           {/* Desktop Filter Sidebar */}
           <div className={`md:w-64 ${isFilterOpen ? 'block' : 'hidden'} md:block`}>
             <FilterSidebar
-              categories={categories}
               initialFilters={filters}
               onFilterChange={handleFilterChange}
               onApplyFilters={handleApplyFilters}
