@@ -21,7 +21,7 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 const Contact = () => {
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
-  
+
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -31,20 +31,20 @@ const Contact = () => {
       message: ''
     }
   });
-  
+
   const onSubmit = async (data: ContactFormValues) => {
     setSubmitting(true);
-    
+
     // In a real app, you would send the data to your backend
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       toast({
         title: "Message sent successfully",
         description: "We'll get back to you as soon as possible!",
       });
-      
+
       form.reset();
     } catch (error) {
       toast({
@@ -60,13 +60,13 @@ const Contact = () => {
   return (
     <main className="container mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-8">Contact Us</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contact Form */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow-sm p-8">
             <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -83,7 +83,7 @@ const Contact = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="email"
@@ -98,7 +98,7 @@ const Contact = () => {
                     )}
                   />
                 </div>
-                
+
                 <FormField
                   control={form.control}
                   name="subject"
@@ -112,7 +112,7 @@ const Contact = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="message"
@@ -120,10 +120,10 @@ const Contact = () => {
                     <FormItem>
                       <FormLabel>Message</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Your message" 
-                          className="min-h-[150px]" 
-                          {...field} 
+                        <Textarea
+                          placeholder="Your message"
+                          className="min-h-[150px]"
+                          {...field}
                           disabled={submitting}
                         />
                       </FormControl>
@@ -131,7 +131,7 @@ const Contact = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <Button type="submit" className="w-full md:w-auto" disabled={submitting}>
                   {submitting ? (
                     <span className="flex items-center gap-2">
@@ -151,12 +151,12 @@ const Contact = () => {
             </Form>
           </div>
         </div>
-        
+
         {/* Contact Info */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
             <h2 className="text-xl font-bold mb-6">Contact Information</h2>
-            
+
             <div className="space-y-6">
               <div className="flex items-start">
                 <div className="bg-primary/10 p-3 rounded-full mr-4">
@@ -164,20 +164,20 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold">Our Location</h3>
-                  <p className="text-slate-600">123 Commerce St, Anytown, USA 12345</p>
+                  <p className="text-slate-600">Bareilly, Uttar Pradesh (243001)</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start">
                 <div className="bg-primary/10 p-3 rounded-full mr-4">
                   <Phone className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Phone Number</h3>
-                  <p className="text-slate-600">+1 (555) 123-4567</p>
+                  <p className="text-slate-600">+91 9999999999</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start">
                 <div className="bg-primary/10 p-3 rounded-full mr-4">
                   <Mail className="h-6 w-6 text-primary" />
@@ -189,21 +189,21 @@ const Contact = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-sm p-8">
             <h2 className="text-xl font-bold mb-6">Business Hours</h2>
-            
+
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-slate-600">Monday - Friday:</span>
                 <span className="font-medium">9:00 AM - 6:00 PM</span>
               </div>
-              
+
               <div className="flex justify-between">
                 <span className="text-slate-600">Saturday:</span>
                 <span className="font-medium">10:00 AM - 4:00 PM</span>
               </div>
-              
+
               <div className="flex justify-between">
                 <span className="text-slate-600">Sunday:</span>
                 <span className="font-medium">Closed</span>
@@ -212,16 +212,16 @@ const Contact = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Map Section */}
       <div className="mt-12">
         <div className="aspect-[16/9] rounded-lg overflow-hidden shadow-sm">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.3059353029!2d-74.25986548248684!3d40.69714941774136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sca!4v1636422293464!5m2!1sen!2sca" 
-            width="100%" 
-            height="100%" 
-            style={{ border: 0 }} 
-            allowFullScreen={true} 
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.3059353029!2d-74.25986548248684!3d40.69714941774136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sca!4v1636422293464!5m2!1sen!2sca"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen={true}
             loading="lazy"
             title="Google Maps"
           ></iframe>

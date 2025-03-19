@@ -25,6 +25,7 @@ import { useAuth } from '@/context/AuthContext';
 import { formatPrice } from '@/lib/utils';
 import { Order } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
+import { getAllDocuments } from '@/lib/firebase';
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -61,7 +62,7 @@ const getStatusIcon = (status: string) => {
 };
 
 const Orders = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { currentUser } = useAuth();
@@ -78,10 +79,9 @@ const Orders = () => {
         // In a real app, this would be the current user's ID
         const userId = 1;
         
-        const response = await apiRequest('GET', `/api/users/${userId}/orders`);
-        const data = await response.json();
-        
-        setOrders(data);
+        const data = await getAllDocuments("orders");
+        const myData  =  data.filter((d: any)=>d.userId === currentUser.uid )
+        setOrders(myData);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
         setError('Failed to load your orders. Please try again later.');
@@ -182,11 +182,11 @@ const Orders = () => {
               <TableHead>Date</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Total</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {/* <TableHead className="text-right">Actions</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order) => (
+            {orders.map((order: any) => (
               <TableRow key={order.id}>
                 <TableCell className="font-medium">#{order.id}</TableCell>
                 <TableCell>
@@ -194,16 +194,16 @@ const Orders = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {getStatusIcon(order.status)}
-                    {getStatusBadge(order.status)}
+                    {getStatusIcon(order.status || "pending")}
+                    {getStatusBadge(order.status || "pending")}
                   </div>
                 </TableCell>
                 <TableCell className="text-right">{formatPrice(order.total)}</TableCell>
-                <TableCell className="text-right">
+                {/* <TableCell className="text-right">
                   <Button variant="outline" size="sm">
                     View Details
                   </Button>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

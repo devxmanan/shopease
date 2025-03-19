@@ -80,9 +80,9 @@ const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps) => {
       <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-auto">
         <div className="p-2">
           <div className="flex justify-end">
-            <Button variant="ghost" size="icon" onClick={onClose} className="absolute right-4 top-4">
+            {/* <Button variant="ghost" size="icon" onClick={onClose} className="absolute right-4 top-4">
               <X className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
@@ -188,12 +188,12 @@ const QuickViewModal = ({ product, isOpen, onClose }: QuickViewModalProps) => {
                   <ShoppingCart className="h-4 w-4 mr-2" /> Add to Cart
                 </Button>
                 
-                <Button
+                {/* <Button
                   variant="outline"
                   size="icon"
                 >
                   <Heart className="h-4 w-4" />
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>

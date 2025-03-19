@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
-import { 
-  Search, 
-  Filter, 
-  ChevronDown, 
+import {
+  Search,
+  Filter,
+  ChevronDown,
   Loader2,
   Eye,
   CheckCircle,
@@ -15,13 +15,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -37,20 +37,20 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import AdminLayout from '@/components/AdminLayout';
 import { useToast } from '@/hooks/use-toast';
 import { Order, OrderItem, Product } from '@shared/schema';
 import { formatPrice } from '@/lib/utils';
-import { 
-  getAllDocuments, 
-  getDocumentById, 
+import {
+  getAllDocuments,
+  getDocumentById,
   updateDocument,
   queryDocuments
 } from '@/lib/firebase';
@@ -92,53 +92,56 @@ const getStatusIcon = (status: string) => {
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-  const [orderProducts, setOrderProducts] = useState<Map<number, Product>>(new Map());
+  const [statusFilter, setStatusFilter] = useState<any>(null);
+  const [currentOrder, setCurrentOrder] = useState<any>(null);
+  const [orderItems, setOrderItems] = useState<any>([]);
+  const [orderProducts, setOrderProducts] = useState<Map<any, any>>(new Map());
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { toast } = useToast();
-  
+
   useEffect(() => {
     fetchOrders();
   }, []);
-  
+
   useEffect(() => {
     let result = [...orders];
-    
+
     // Apply status filter
     if (statusFilter) {
       result = result.filter(order => order.status === statusFilter);
     }
-    
+
     // Apply search filter (search by order ID or customer info)
     if (searchTerm) {
-      result = result.filter(order => 
+      result = result.filter(order =>
         order.id.toString().includes(searchTerm) ||
         JSON.stringify(order.shippingAddress).toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     setFilteredOrders(result);
   }, [orders, statusFilter, searchTerm]);
-  
+
   const fetchOrders = async () => {
     try {
       setLoading(true);
       const ordersData = await getAllDocuments('orders');
-      
+
       // Convert Firebase data to proper Order type
-      const convertedOrders: Order[] = ordersData.map((order: any) => ({
-        id: parseInt(order.id),
-        userId: parseInt(order.userId) || 0,
+      const convertedOrders: any = ordersData.map((order: any) => ({
+        id: order.id,
+        userId: order.userId || 0,
         status: order.status || 'pending',
+        subtotal: parseFloat(order.subtotal) || 0,
+        tax: parseFloat(order.tax) || 0,
+        cartItems: order.cartItems || [],
         total: parseFloat(order.total) || 0,
         shippingAddress: order.shippingAddress || {
           fullName: '',
@@ -149,9 +152,9 @@ const OrderManagement = () => {
           country: '',
           phoneNumber: ''
         },
-        createdAt: order.createdAt ? new Date(order.createdAt) : null
+        createdAt: order.createdAt ? order.createdAt : null
       }));
-      
+
       setOrders(convertedOrders);
       setFilteredOrders(convertedOrders);
     } catch (err) {
@@ -165,31 +168,28 @@ const OrderManagement = () => {
       setLoading(false);
     }
   };
-  
-  const handleViewOrder = async (order: Order) => {
+
+  const handleViewOrder = async (order: any) => {
     setCurrentOrder(order);
     setIsViewModalOpen(true);
-    
+
     try {
-      // Fetch order items
-      const orderItemsData = await queryDocuments('orderItems', 'orderId', '==', order.id);
-      const convertedOrderItems: OrderItem[] = orderItemsData.map((item: any) => ({
-        id: parseInt(item.id),
-        orderId: parseInt(item.orderId) || 0,
-        productId: parseInt(item.productId) || 0,
-        quantity: parseInt(item.quantity) || 0,
-        price: parseFloat(item.price) || 0
+
+      const convertedOrderItems: any = await currentOrder.cartItems.map((item: any) => ({
+        productId: item.productId,
+        quantity: (item.quantity),
+        price: (item.price)
       }));
       setOrderItems(convertedOrderItems);
-      
+
       // Fetch product details for each order item
       const productsMap = new Map<number, Product>();
-      
+
       for (const item of convertedOrderItems) {
-        const productData = await getDocumentById('products', item.productId.toString());
+        const productData = await getDocumentById('products', item.productId);
         if (productData) {
-          const convertedProduct: Product = {
-            id: parseInt(productData.id),
+          const convertedProduct: any = {
+            id: productData.id,
             name: productData.name || '',
             description: productData.description || null,
             price: parseFloat(productData.price) || 0,
@@ -202,51 +202,36 @@ const OrderManagement = () => {
             featured: productData.featured || null,
             isOnSale: productData.isOnSale || null,
             isNew: productData.isNew || null,
-            createdAt: productData.createdAt ? new Date(productData.createdAt) : null
+            createdAt: productData.createdAt ? productData.createdAt : null
           };
           productsMap.set(item.productId, convertedProduct);
         }
       }
-      
+
       setOrderProducts(productsMap);
     } catch (err) {
       console.error('Error fetching order details:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to load order details',
-        variant: 'destructive',
-      });
     }
   };
-  
-  const handleStatusChange = (order: Order) => {
+
+  const handleStatusChange = (order: any) => {
     setCurrentOrder(order);
     setNewStatus(order.status);
     setIsStatusModalOpen(true);
   };
-  
+
   const updateOrderStatus = async () => {
     if (!currentOrder || !newStatus) return;
-    
+
     try {
       setIsSubmitting(true);
-      
-      // Update order status
-      await apiRequest('PUT', `/api/orders/${currentOrder.id}/status`, { status: newStatus });
-      
+      await updateDocument("orders", currentOrder.id, { ...currentOrder, status: newStatus })
+      await fetchOrders();
+      setIsStatusModalOpen(false);
       toast({
         title: 'Success',
-        description: 'Order status has been updated',
+        description: 'Order status updated successfully',
       });
-      
-      // Update local state
-      setOrders(orders.map(order => 
-        order.id === currentOrder.id 
-          ? { ...order, status: newStatus } 
-          : order
-      ));
-      
-      setIsStatusModalOpen(false);
     } catch (err) {
       console.error('Error updating order status:', err);
       toast({
@@ -264,7 +249,7 @@ const OrderManagement = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Orders</h1>
       </div>
-      
+
       {/* Filters and Search */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-grow">
@@ -276,11 +261,11 @@ const OrderManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
-              <Filter size={16} /> 
+              <Filter size={16} />
               {statusFilter ? `Status: ${statusFilter}` : 'All Statuses'}
               <ChevronDown size={16} />
             </Button>
@@ -307,7 +292,7 @@ const OrderManagement = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
+
       {/* Orders Table */}
       <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
         {loading ? (
@@ -337,7 +322,7 @@ const OrderManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredOrders.map((order) => (
+              {filteredOrders.map((order: any) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">#{order.id}</TableCell>
                   <TableCell>
@@ -353,7 +338,7 @@ const OrderManagement = () => {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    {formatPrice(order.total)}
+                    {formatPrice(order.subtotal)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -381,7 +366,7 @@ const OrderManagement = () => {
           </Table>
         )}
       </div>
-      
+
       {/* View Order Modal */}
       <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
         <DialogContent className="max-w-3xl">
@@ -391,7 +376,7 @@ const OrderManagement = () => {
               Order #{currentOrder?.id} - {currentOrder && new Date(currentOrder.createdAt).toLocaleString()}
             </DialogDescription>
           </DialogHeader>
-          
+
           {currentOrder && (
             <div className="space-y-6">
               {/* Order Status */}
@@ -405,7 +390,7 @@ const OrderManagement = () => {
                   Update Status
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Customer Information */}
                 <div className="space-y-2">
@@ -420,18 +405,18 @@ const OrderManagement = () => {
                     <p className="mt-2">{currentOrder.shippingAddress.phoneNumber}</p>
                   </div>
                 </div>
-                
+
                 {/* Order Summary */}
                 <div className="space-y-2">
                   <h3 className="font-semibold text-sm">Order Summary</h3>
                   <div className="bg-slate-50 p-4 rounded-md">
                     <div className="flex justify-between mb-2">
                       <span className="text-slate-600">Subtotal</span>
-                      <span>{formatPrice(currentOrder.total * 0.92)}</span>
+                      <span>{formatPrice(currentOrder.subtotal)}</span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="text-slate-600">Tax (8%)</span>
-                      <span>{formatPrice(currentOrder.total * 0.08)}</span>
+                      <span>{formatPrice(currentOrder.subtotal * 0.08)}</span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="text-slate-600">Shipping</span>
@@ -440,25 +425,25 @@ const OrderManagement = () => {
                     <div className="border-t border-slate-200 my-2"></div>
                     <div className="flex justify-between font-bold">
                       <span>Total</span>
-                      <span>{formatPrice(currentOrder.total)}</span>
+                      <span>{formatPrice(currentOrder.subtotal + currentOrder.subtotal * 0.08)}</span>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               {/* Order Items */}
               <div className="space-y-2">
                 <h3 className="font-semibold text-sm">Order Items</h3>
                 <div className="bg-slate-50 p-4 rounded-md">
                   <div className="space-y-4">
-                    {orderItems.map((item) => {
+                    {orderItems.map((item: any) => {
                       const product = orderProducts.get(item.productId);
                       return (
                         <div key={item.id} className="flex items-center">
                           <div className="h-16 w-16 rounded bg-white overflow-hidden mr-4 flex-shrink-0">
-                            <img 
-                              src={product?.imageUrls?.[0] || 'https://placehold.co/100x100/e2e8f0/a0aec0?text=No+Image'} 
-                              alt={product?.name || `Product ${item.productId}`} 
+                            <img
+                              src={product?.imageUrls?.[0] || 'https://placehold.co/100x100/e2e8f0/a0aec0?text=No+Image'}
+                              alt={product?.name || `Product ${item.productId}`}
                               className="w-full h-full object-cover"
                             />
                           </div>
@@ -478,7 +463,7 @@ const OrderManagement = () => {
                         </div>
                       );
                     })}
-                    
+
                     {orderItems.length === 0 && (
                       <p className="text-center text-slate-500 py-2">No items found for this order</p>
                     )}
@@ -489,7 +474,7 @@ const OrderManagement = () => {
           )}
         </DialogContent>
       </Dialog>
-      
+
       {/* Update Status Modal */}
       <Dialog open={isStatusModalOpen} onOpenChange={setIsStatusModalOpen}>
         <DialogContent>
@@ -499,7 +484,7 @@ const OrderManagement = () => {
               Change the status for order #{currentOrder?.id}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <p className="text-sm font-medium">Current Status:</p>
@@ -508,7 +493,7 @@ const OrderManagement = () => {
                 {currentOrder && getStatusBadge(currentOrder.status)}
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <p className="text-sm font-medium">New Status:</p>
               <Select value={newStatus} onValueChange={setNewStatus}>
@@ -525,16 +510,16 @@ const OrderManagement = () => {
               </Select>
             </div>
           </div>
-          
+
           <DialogFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsStatusModalOpen(false)}
               disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={updateOrderStatus}
               disabled={isSubmitting || newStatus === currentOrder?.status}
             >

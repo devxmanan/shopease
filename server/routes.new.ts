@@ -230,9 +230,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           country: z.string(),
           phoneNumber: z.string()
         }),
-        userId: z.number(),
+        userId: z.string(),
         cartItems: z.array(z.object({
-          productId: z.number(),
+          productId: z.string(),
           quantity: z.number(),
           price: z.number()
         }))

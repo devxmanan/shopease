@@ -327,12 +327,12 @@ const ProductDetail = () => {
               {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </Button>
             
-            <Button
+            {/* <Button
               variant="outline"
               size="icon"
             >
               <Heart className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </div>
           
           <Separator />

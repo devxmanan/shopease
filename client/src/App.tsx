@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ProductManagement from "./pages/Admin/ProductManagement";
 import OrderManagement from "./pages/Admin/OrderManagement";
 import AdminRoute from "./components/routing/AdminRoute";
+import MyAccount from "./pages/MyAccount";
 
 function Router() {
   return (
@@ -35,6 +36,7 @@ function Router() {
           <Route path="/orders" component={Orders} />
           <Route path="/categories" component={Categories} />
           <Route path="/about" component={About} />
+          <Route path="/account" component={MyAccount} />
           <Route path="/contact" component={Contact} />
           <Route path="/admin">
             {() => <AdminRoute component={AdminDashboard} />}

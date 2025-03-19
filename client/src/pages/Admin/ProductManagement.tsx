@@ -39,17 +39,17 @@ import {
 } from '@/lib/firebase';
 
 const ProductManagement = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<any>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [selectedProducts, setSelectedProducts] = useState<Set<number>>(new Set());
+  const [selectedProducts, setSelectedProducts] = useState<Set<any>>(new Set());
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { toast } = useToast();
@@ -63,7 +63,7 @@ const ProductManagement = () => {
     if (!searchTerm) {
       setFilteredProducts(products);
     } else {
-      const filtered = products.filter(product => 
+      const filtered = products.filter((product: any) => 
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -78,8 +78,8 @@ const ProductManagement = () => {
       const productsData = await getAllDocuments('products');
       
       // Convert Firebase data to Product type
-      const convertedProducts: Product[] = productsData.map((doc: any) => ({
-        id: parseInt(doc.id),
+      const convertedProducts = productsData.map((doc: any) => ({
+        id: doc.id,
         name: doc.name || '',
         description: doc.description || null,
         price: doc.price || 0,
@@ -136,14 +136,14 @@ const ProductManagement = () => {
   
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      const allIds = new Set(filteredProducts.map(product => product.id));
+      const allIds = new Set(filteredProducts.map((product: any) => product.id));
       setSelectedProducts(allIds);
     } else {
       setSelectedProducts(new Set());
     }
   };
   
-  const handleSelectProduct = (productId: number, checked: boolean) => {
+  const handleSelectProduct = (productId: string, checked: boolean) => {
     const newSelected = new Set(selectedProducts);
     if (checked) {
       newSelected.add(productId);
@@ -249,6 +249,7 @@ const ProductManagement = () => {
       
       if (currentProduct) {
         // Update existing product
+        console.log(currentProduct.id)
         await updateDocument('products', currentProduct.id.toString(), formattedData);
         toast({
           title: 'Success',
@@ -314,7 +315,7 @@ const ProductManagement = () => {
         </div>
         
         <div className="flex gap-2">
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter size={16} /> Filter
@@ -327,7 +328,7 @@ const ProductManagement = () => {
               <DropdownMenuItem>New Arrivals</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          
+           */}
           {selectedProducts.size > 0 && (
             <Button variant="destructive" onClick={handleBulkDelete} disabled={isSubmitting}>
               {isSubmitting ? (
@@ -414,7 +415,7 @@ const ProductManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProducts.map((product) => (
+              {filteredProducts.map((product: any) => (
                 <TableRow key={product.id}>
                   <TableCell>
                     <Checkbox 

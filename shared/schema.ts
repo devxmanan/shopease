@@ -4,7 +4,7 @@ import { z } from "zod";
 
 // Users Table
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   password: text("password"),
   displayName: text("display_name"),
@@ -25,7 +25,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 // Products Table
 export const products = pgTable("products", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
   price: doublePrecision("price").notNull(),
@@ -60,7 +60,7 @@ export type OrderStatus = z.infer<typeof orderStatusEnum>;
 
 // Orders Table
 export const orders = pgTable("orders", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey(),
   userId: integer("user_id").notNull(),
   status: text("status").notNull().default("pending"),
   total: doublePrecision("total").notNull(),
@@ -77,7 +77,7 @@ export const insertOrderSchema = createInsertSchema(orders).pick({
 
 // Order Items Table
 export const orderItems = pgTable("order_items", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey(),
   orderId: integer("order_id").notNull(),
   productId: integer("product_id").notNull(),
   quantity: integer("quantity").notNull(),
@@ -93,7 +93,7 @@ export const insertOrderItemSchema = createInsertSchema(orderItems).pick({
 
 // Categories Table
 export const categories = pgTable("categories", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey(),
   name: text("name").notNull().unique(),
   imageUrl: text("image_url"),
 });
@@ -121,7 +121,7 @@ export type InsertCategory = z.infer<typeof insertCategorySchema>;
 
 // Type for cart item
 export interface CartItem {
-  productId: number;
+  productId: string;
   name: string;
   price: number;
   quantity: number;

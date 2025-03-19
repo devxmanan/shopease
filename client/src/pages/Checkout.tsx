@@ -9,6 +9,7 @@ import { apiRequest } from '@/lib/queryClient';
 import CheckoutForm from '@/components/CheckoutForm';
 import OrderSummary from '@/components/OrderSummary';
 import { CartItem } from '@shared/schema';
+import { createDocument } from '@/lib/firebase';
 
 const Checkout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,52 +19,56 @@ const Checkout = () => {
   const { cartItems, getTotal, clearCart } = useCart();
   const { currentUser } = useAuth();
   const [_, setLocation] = useLocation();
-  
+
   // Redirect if cart is empty
   useEffect(() => {
     if (cartItems.length === 0 && !orderComplete) {
       setLocation('/cart');
     }
   }, [cartItems, orderComplete, setLocation]);
-  
+
   // Redirect if not logged in
   useEffect(() => {
     if (!currentUser && !orderComplete) {
       setLocation('/');
     }
   }, [currentUser, orderComplete, setLocation]);
-  
+
   const handleCheckout = async (shippingAddress: any) => {
     if (!currentUser) {
       setError('You must be logged in to complete your order');
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
       setError(null);
-      
+
       // Map cart items to the format needed for API
-      const orderCartItems = cartItems.map((item: CartItem) => ({
+      const orderCartItems = cartItems.map((item: any) => ({
         productId: item.productId,
         quantity: item.quantity,
         price: item.price
       }));
-      
+      let subtotal = 0;
+      orderCartItems.forEach((value) => {
+        subtotal += value.price * value.quantity
+      })
+      const tax = subtotal * 0.08
       // Create order through API
-      const response = await apiRequest('POST', '/api/orders', {
-        userId: 1, // In a real app, this would come from currentUser.id
+      createDocument("orders", {
+        userId: currentUser.uid,
         shippingAddress,
-        cartItems: orderCartItems
+        cartItems: orderCartItems,
+        createdAt: Date.now(),
+        subtotal,
+        tax,
+        total: subtotal + tax
       });
-      
-      const orderData = await response.json();
-      
       // Clear cart and show success message
       clearCart();
-      setOrderId(orderData.id);
       setOrderComplete(true);
-      
+
     } catch (err) {
       console.error('Checkout error:', err);
       setError('There was a problem processing your order. Please try again.');
@@ -102,13 +107,13 @@ const Checkout = () => {
   return (
     <main className="container mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-      
+
       {error && (
         <div className="p-4 mb-6 bg-red-50 border border-red-200 rounded-md text-red-800">
           {error}
         </div>
       )}
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Checkout Form */}
         <div className="lg:col-span-2">
@@ -122,13 +127,13 @@ const Checkout = () => {
                 <TabsTrigger value="paypal" disabled>PayPal</TabsTrigger>
                 <TabsTrigger value="bank-transfer" disabled>Bank Transfer</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="credit-card">
                 <CheckoutForm onSubmit={handleCheckout} isSubmitting={isSubmitting} />
               </TabsContent>
             </Tabs>
           </div>
-          
+
           {/* Security Notice */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-start space-x-4">
@@ -143,7 +148,7 @@ const Checkout = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Order Summary */}
         <div className="lg:col-span-1">
           <OrderSummary
@@ -151,7 +156,7 @@ const Checkout = () => {
             total={getTotal()}
             isSubmitting={isSubmitting}
           />
-          
+
           {/* Shipping Info */}
           <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-start space-x-4">

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/AuthContext';
+import { createDocument } from '@/lib/firebase';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -65,11 +66,11 @@ const LoginModal = ({ isOpen, onClose, onRegisterClick }: LoginModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="space-y-3">
-          <div className="flex justify-end">
+          {/* <div className="flex justify-end">
             <Button variant="ghost" size="icon" onClick={onClose} className="absolute right-4 top-4">
               <X className="h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
           <DialogTitle className="text-2xl font-bold text-center">Login to Your Account</DialogTitle>
         </DialogHeader>
         
@@ -134,7 +135,7 @@ const LoginModal = ({ isOpen, onClose, onRegisterClick }: LoginModalProps) => {
           >
             <FaGoogle className="mr-2 text-red-500" /> Login with Google
           </Button>
-          
+{/*           
           <Button 
             type="button" 
             variant="outline" 
@@ -142,7 +143,7 @@ const LoginModal = ({ isOpen, onClose, onRegisterClick }: LoginModalProps) => {
             disabled={loading}
           >
             <FaFacebook className="mr-2 text-blue-600" /> Login with Facebook
-          </Button>
+          </Button> */}
         </div>
         
         <p className="text-center text-slate-600 pt-2">

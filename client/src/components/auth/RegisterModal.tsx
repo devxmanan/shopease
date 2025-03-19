@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/AuthContext';
+import { createDocument } from '@/lib/firebase';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
     try {
       const user = await register(data.email, data.password);
       if (user) {
+        await createDocument("users", { email: user.email, uid: user.uid, createdAt: user.metadata.creationTime, lastLogin: user.metadata.lastSignInTime });
         onClose();
         form.reset();
       }
@@ -62,6 +64,7 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
     try {
       const user = await googleSignIn();
       if (user) {
+        await createDocument("users", { email: user.email, uid: user.uid, createdAt: user.metadata.creationTime, lastLogin: user.metadata.lastSignInTime });
         onClose();
       }
     } finally {
@@ -73,14 +76,14 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="space-y-3">
-          <div className="flex justify-end">
+          {/* <div className="flex justify-end">
             <Button variant="ghost" size="icon" onClick={onClose} className="absolute right-4 top-4">
               <X className="h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
           <DialogTitle className="text-2xl font-bold text-center">Create an Account</DialogTitle>
         </DialogHeader>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -90,9 +93,9 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="your@email.com" 
-                      {...field} 
+                    <Input
+                      placeholder="your@email.com"
+                      {...field}
                       disabled={loading}
                     />
                   </FormControl>
@@ -100,7 +103,7 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="password"
@@ -108,10 +111,10 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      {...field}
                       disabled={loading}
                     />
                   </FormControl>
@@ -119,7 +122,7 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="confirmPassword"
@@ -127,10 +130,10 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      {...field}
                       disabled={loading}
                     />
                   </FormControl>
@@ -138,34 +141,34 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }: RegisterModalProps) =>
                 </FormItem>
               )}
             />
-            
+
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account..." : "Register"}
             </Button>
           </form>
         </Form>
-        
+
         <div className="flex items-center my-4">
           <div className="flex-grow border-t border-slate-300"></div>
           <span className="mx-4 text-slate-500">or</span>
           <div className="flex-grow border-t border-slate-300"></div>
         </div>
-        
-        <Button 
-          type="button" 
-          variant="outline" 
+
+        <Button
+          type="button"
+          variant="outline"
           className="w-full"
           onClick={handleGoogleSignIn}
           disabled={loading}
         >
           <FaGoogle className="mr-2 text-red-500" /> Sign up with Google
         </Button>
-        
+
         <p className="text-center text-slate-600 pt-2">
           Already have an account?{' '}
-          <Button 
-            variant="link" 
-            className="p-0 h-auto font-normal" 
+          <Button
+            variant="link"
+            className="p-0 h-auto font-normal"
             onClick={() => {
               onClose();
               onLoginClick();

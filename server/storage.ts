@@ -32,29 +32,29 @@ export interface IStorage {
   createCategory(category: InsertCategory): Promise<Category>;
   
   // Orders
-  getOrder(id: number): Promise<Order | undefined>;
+  getOrder(id: string): Promise<Order | undefined>;
   getAllOrders(): Promise<Order[]>;
-  getOrdersByUser(userId: number): Promise<Order[]>;
+  getOrdersByUser(userId: string): Promise<Order[]>;
   createOrder(order: InsertOrder): Promise<Order>;
-  updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
+  updateOrderStatus(id: string, status: string): Promise<Order | undefined>;
   
   // Order Items
-  getOrderItem(id: number): Promise<OrderItem | undefined>;
-  getOrderItems(orderId: number): Promise<OrderItem[]>;
+  getOrderItem(id: string): Promise<OrderItem | undefined>;
+  getOrderItems(orderId: string): Promise<OrderItem[]>;
   createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private products: Map<number, Product>;
-  private categories: Map<number, Category>;
-  private orders: Map<number, Order>;
-  private orderItems: Map<number, OrderItem>;
-  private userId: number;
-  private productId: number;
-  private categoryId: number;
-  private orderId: number;
-  private orderItemId: number;
+  private users: Map<any, User>;
+  private products: Map<any, Product>;
+  private categories: Map<any, Category>;
+  private orders: Map<any, Order>;
+  private orderItems: Map<any, OrderItem>;
+  private userId: string;
+  private productId: string;
+  private categoryId: string;
+  private orderId: string;
+  private orderItemId: string;
 
   constructor() {
     this.users = new Map();
@@ -62,11 +62,11 @@ export class MemStorage implements IStorage {
     this.categories = new Map();
     this.orders = new Map();
     this.orderItems = new Map();
-    this.userId = 1;
-    this.productId = 1;
-    this.categoryId = 1;
-    this.orderId = 1;
-    this.orderItemId = 1;
+    this.userId = "";
+    this.productId = "";
+    this.categoryId = "";
+    this.orderId = "";
+    this.orderItemId = "";
     
     // Initialize with some predefined categories
     this.initializeData();
@@ -87,7 +87,7 @@ export class MemStorage implements IStorage {
   }
 
   // User methods
-  async getUser(id: number): Promise<User | undefined> {
+  async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
 
@@ -110,7 +110,7 @@ export class MemStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userId++;
+    const id = this.userId+ "1"
     const user: User = {
       id,
       email: insertUser.email,
@@ -130,7 +130,7 @@ export class MemStorage implements IStorage {
   }
   
   // Product methods
-  async getProduct(id: number): Promise<Product | undefined> {
+  async getProduct(id: string): Promise<Product | undefined> {
     return this.products.get(id);
   }
   
@@ -160,7 +160,7 @@ export class MemStorage implements IStorage {
     return product;
   }
   
-  async updateProduct(id: number, updateData: Partial<InsertProduct>): Promise<Product | undefined> {
+  async updateProduct(id: string, updateData: Partial<InsertProduct>): Promise<Product | undefined> {
     const product = this.products.get(id);
     if (!product) return undefined;
     
@@ -169,12 +169,12 @@ export class MemStorage implements IStorage {
     return updatedProduct;
   }
   
-  async deleteProduct(id: number): Promise<boolean> {
+  async deleteProduct(id: string): Promise<boolean> {
     return this.products.delete(id);
   }
   
   // Category methods
-  async getCategory(id: number): Promise<Category | undefined> {
+  async getCategory(id: string): Promise<Category | undefined> {
     return this.categories.get(id);
   }
   
@@ -200,7 +200,7 @@ export class MemStorage implements IStorage {
   }
   
   // Order methods
-  async getOrder(id: number): Promise<Order | undefined> {
+  async getOrder(id: string): Promise<Order | undefined> {
     return this.orders.get(id);
   }
   
@@ -208,7 +208,7 @@ export class MemStorage implements IStorage {
     return Array.from(this.orders.values());
   }
   
-  async getOrdersByUser(userId: number): Promise<Order[]> {
+  async getOrdersByUser(userId: string): Promise<Order[]> {
     return Array.from(this.orders.values()).filter(
       (order) => order.userId === userId
     );
@@ -228,7 +228,7 @@ export class MemStorage implements IStorage {
     return order;
   }
   
-  async updateOrderStatus(id: number, status: string): Promise<Order | undefined> {
+  async updateOrderStatus(id: string, status: string): Promise<Order | undefined> {
     const order = this.orders.get(id);
     if (!order) return undefined;
     
@@ -238,11 +238,11 @@ export class MemStorage implements IStorage {
   }
   
   // Order Item methods
-  async getOrderItem(id: number): Promise<OrderItem | undefined> {
+  async getOrderItem(id: string): Promise<OrderItem | undefined> {
     return this.orderItems.get(id);
   }
   
-  async getOrderItems(orderId: number): Promise<OrderItem[]> {
+  async getOrderItems(orderId: string): Promise<OrderItem[]> {
     return Array.from(this.orderItems.values()).filter(
       (item) => item.orderId === orderId
     );

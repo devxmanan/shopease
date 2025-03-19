@@ -71,7 +71,7 @@ export const createDocument = async (collectionName: string, data: any) => {
   }
 };
 
-export const getAllDocuments = async (collectionName: string) => {
+export const getAllDocuments: any = async (collectionName: string) => {
   try {
     const querySnapshot = await getDocs(collection(db, collectionName));
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -87,9 +87,11 @@ export const getDocumentById = async (collectionName: string, id: string) => {
   try {
     const docRef = doc(db, collectionName, id);
     const docSnap = await getDoc(docRef);
-    
+    const data: any = {
+      id: docSnap.id, ...docSnap.data()
+    }
     if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() };
+      return data;
     } else {
       return null;
     }

@@ -103,14 +103,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
               >
                 <Eye className="h-4 w-4" />
               </Button>
-              <Button
+              {/* <Button
                 variant="secondary"
                 size="icon"
                 className="bg-white text-primary p-2 rounded-full mx-1 hover:bg-primary hover:text-white transition-colors"
                 title="Add to wishlist"
               >
                 <Heart className="h-4 w-4" />
-              </Button>
+              </Button> */}
             </div>
           </div>
           

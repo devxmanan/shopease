@@ -8,6 +8,7 @@ import AdminLayout from '@/components/AdminLayout';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from 'recharts';
 import { getAllDocuments } from '@/lib/firebase';
 import { Product, Order, User } from '@shared/schema';
+import { FaRupeeSign } from 'react-icons/fa';
 
 // Demo data for charts
 const revenueData = [
@@ -28,21 +29,21 @@ const salesData = [
 ];
 
 const AdminDashboard = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<any>([]);
+  const [orders, setOrders] = useState<any>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const productsData = await getAllDocuments('products');
         const ordersData = await getAllDocuments('orders');
         const usersData = await getAllDocuments('users');
-        
+
         // Convert Firebase data to proper types
-        const convertedProducts: Product[] = productsData.map((doc: any) => ({
-          id: parseInt(doc.id),
+        const convertedProducts: any = productsData.map((doc: any) => ({
+          id: doc.id,
           name: doc.name || '',
           description: doc.description || null,
           price: doc.price || 0,
@@ -57,18 +58,20 @@ const AdminDashboard = () => {
           isNew: doc.isNew || null,
           createdAt: doc.createdAt ? new Date(doc.createdAt) : null
         }));
-        
-        const convertedOrders: Order[] = ordersData.map((doc: any) => ({
-          id: parseInt(doc.id),
+
+        const convertedOrders: any = ordersData.map((doc: any) => ({
+          id: doc.id,
           userId: doc.userId || 0,
           status: doc.status || 'pending',
+          subtotal: doc.subtotal || 0,
+          tax: doc.tax || 0,
           total: doc.total || 0,
           shippingAddress: doc.shippingAddress || null,
           createdAt: doc.createdAt ? new Date(doc.createdAt) : null,
         }));
-        
-        const convertedUsers: User[] = usersData.map((doc: any) => ({
-          id: parseInt(doc.id),
+
+        const convertedUsers: any = usersData.map((doc: any) => ({
+          id: doc.id,
           email: doc.email || '',
           password: doc.password || null,
           displayName: doc.displayName || null,
@@ -77,7 +80,7 @@ const AdminDashboard = () => {
           firebaseId: doc.firebaseId || null,
           createdAt: doc.createdAt ? new Date(doc.createdAt) : null,
         }));
-        
+
         setProducts(convertedProducts);
         setOrders(convertedOrders);
         setUsers(convertedUsers);
@@ -87,16 +90,16 @@ const AdminDashboard = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
-  
+
   // Calculate metrics
-  const totalSales = orders.reduce((sum, order) => sum + order.total, 0);
-  const pendingOrders = orders.filter(order => order.status === 'pending').length;
+  const totalSales = orders.reduce((sum: any, order: any) => sum + order.total, 0);
+  const pendingOrders = orders.filter((order: any) => order.status === 'pending').length;
   const totalProducts = products.length;
-  const lowStockProducts = products.filter(product => product.stock < 10).length;
-  
+  const lowStockProducts = products.filter((product: any) => product.stock < 10).length;
+
   return (
     <AdminLayout>
       <div className="flex justify-between items-center mb-6">
@@ -108,7 +111,7 @@ const AdminDashboard = () => {
           </Button>
         </div>
       </div>
-      
+
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
@@ -116,30 +119,30 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-500">Total Revenue</p>
-                <h3 className="text-2xl font-bold mt-1">${totalSales.toFixed(2)}</h3>
+                <h3 className="text-2xl font-bold mt-1">{totalSales.toFixed(2)}Rs.</h3>
                 <p className="text-xs text-green-500 flex items-center mt-1.5">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                     className="w-3 h-3 mr-1"
                   >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z" 
-                      clipRule="evenodd" 
+                    <path
+                      fillRule="evenodd"
+                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z"
+                      clipRule="evenodd"
                     />
                   </svg>
                   12% from last month
                 </p>
               </div>
               <div className="bg-blue-50 p-3 rounded-full">
-                <DollarSign className="h-5 w-5 text-blue-500" />
+                <FaRupeeSign className="h-5 w-5 text-blue-500" />
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -147,16 +150,16 @@ const AdminDashboard = () => {
                 <p className="text-sm font-medium text-slate-500">Orders</p>
                 <h3 className="text-2xl font-bold mt-1">{orders.length}</h3>
                 <p className="text-xs text-green-500 flex items-center mt-1.5">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                     className="w-3 h-3 mr-1"
                   >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z" 
-                      clipRule="evenodd" 
+                    <path
+                      fillRule="evenodd"
+                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z"
+                      clipRule="evenodd"
                     />
                   </svg>
                   5% from last month
@@ -168,7 +171,7 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -176,16 +179,16 @@ const AdminDashboard = () => {
                 <p className="text-sm font-medium text-slate-500">Customers</p>
                 <h3 className="text-2xl font-bold mt-1">{users.length}</h3>
                 <p className="text-xs text-green-500 flex items-center mt-1.5">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                     className="w-3 h-3 mr-1"
                   >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z" 
-                      clipRule="evenodd" 
+                    <path
+                      fillRule="evenodd"
+                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z"
+                      clipRule="evenodd"
                     />
                   </svg>
                   18% from last month
@@ -197,7 +200,7 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -205,16 +208,16 @@ const AdminDashboard = () => {
                 <p className="text-sm font-medium text-slate-500">Products</p>
                 <h3 className="text-2xl font-bold mt-1">{totalProducts}</h3>
                 <p className="text-xs text-red-500 flex items-center mt-1.5">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                     className="w-3 h-3 mr-1 rotate-180"
                   >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z" 
-                      clipRule="evenodd" 
+                    <path
+                      fillRule="evenodd"
+                      d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.281a.75.75 0 01.531.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.407 19.407 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a20.923 20.923 0 015.545-4.931l-3.042-.815a.75.75 0 01-.53-.919z"
+                      clipRule="evenodd"
                     />
                   </svg>
                   {lowStockProducts} low stock
@@ -227,7 +230,7 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-7 gap-6 mb-8">
         {/* Charts */}
         <Card className="md:col-span-5">
@@ -249,7 +252,7 @@ const AdminDashboard = () => {
                   <option>Last year</option>
                 </select>
               </div>
-              
+
               <TabsContent value="revenue" className="mt-0">
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
@@ -264,7 +267,7 @@ const AdminDashboard = () => {
                   </ResponsiveContainer>
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="sales" className="mt-0">
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
@@ -282,7 +285,7 @@ const AdminDashboard = () => {
             </Tabs>
           </CardContent>
         </Card>
-        
+
         {/* Recent Activity */}
         <Card className="md:col-span-2">
           <CardHeader>
@@ -291,7 +294,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {orders.slice(0, 5).map((order, index) => (
+              {orders.slice(0, 5).map((order: any, index: number) => (
                 <div key={index} className="flex items-start space-x-3">
                   <div className="bg-slate-100 rounded-full p-2 mt-0.5">
                     <ShoppingCart className="h-4 w-4 text-slate-600" />
@@ -299,12 +302,12 @@ const AdminDashboard = () => {
                   <div className="flex-1">
                     <p className="text-sm font-medium">New order #{order.id}</p>
                     <p className="text-xs text-slate-500">
-                      ${order.total.toFixed(2)} • {new Date(order.createdAt || "").toLocaleDateString()}
+                      {order.total?.toFixed(2)}Rs • {new Date(order.createdAt || "").toLocaleDateString()}
                     </p>
                   </div>
                 </div>
               ))}
-              
+
               {orders.length === 0 && (
                 <p className="text-sm text-slate-500 text-center py-4">No recent activity</p>
               )}
@@ -312,7 +315,7 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
@@ -330,7 +333,7 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium">Low Stock Products</CardTitle>
@@ -346,7 +349,7 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium">Today's Revenue</CardTitle>
@@ -354,7 +357,7 @@ const AdminDashboard = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               {/* temporary demo data */}
-              <h3 className="text-2xl font-bold">$1,243.32</h3>
+              <h3 className="text-2xl font-bold">{totalSales}Rs.</h3>
               <div className="text-green-500 text-sm flex items-center">
                 +18% <ArrowUpRight className="h-3 w-3 ml-1" />
               </div>

@@ -34,16 +34,6 @@ const navigation = [
     href: '/admin/orders',
     icon: ShoppingCart
   },
-  {
-    name: 'Customers',
-    href: '/admin/customers',
-    icon: Users
-  },
-  {
-    name: 'Settings',
-    href: '/admin/settings',
-    icon: Settings
-  }
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
@@ -107,11 +97,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <span className="sr-only">Toggle sidebar</span>
           </Button>
 
-          <div className="flex flex-1 items-center justify-end gap-4">
+          {/* <div className="flex flex-1 items-center justify-end gap-4">
             <Button variant="ghost" size="sm">
               Account <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
         </div>
 
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
