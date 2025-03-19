@@ -5,7 +5,7 @@ import { Category } from '@shared/schema';
 const CategoryCard = ({ category }: {category: any}) => {
 
   return (
-    <Link href={`/shop?category=${encodeURIComponent(category)}`}>
+    <Link href={`/shop?category=${category.name}`}>
       <div className="relative rounded-lg overflow-hidden group cursor-pointer">
         <img 
           src={category.image} 
