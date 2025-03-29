@@ -58,9 +58,10 @@ const FilterSidebar = ({
     const urlParams = new URLSearchParams(window.location.search);
     category = urlParams.get('category') || "";
     setTimeout(() => {
-      if (category)
+      if (category) {
         console.log(category);
         handleCategoryChange(category, true);
+      }
     }, 300)
 
   }, [category])
